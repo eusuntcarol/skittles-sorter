@@ -1,17 +1,24 @@
 #include <Arduino.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
-#define LED_PIN PD2
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
-  DDRD |= (1 << LED_PIN);
+  Wire.begin();
+  delay(100);
+
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();
+  
+  lcd.setCursor(0, 0);
+  lcd.print("TEST DISPLAY");
 }
 
 void loop() {
-  PORTD |= (1 << LED_PIN);
-  
+  lcd.backlight();
   delay(1000);
-  
-  PORTD &= ~(1 << LED_PIN);
-  
+  lcd.noBacklight();
   delay(1000);
 }
