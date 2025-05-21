@@ -1,17 +1,17 @@
 #include <Arduino.h>
 
-#define LED_PIN PD2
+#include <Servo.h>
+
+Servo myServo;
 
 void setup() {
-  DDRD |= (1 << LED_PIN);
+  myServo.attach(9);
 }
 
 void loop() {
-  PORTD |= (1 << LED_PIN);
-  
+  myServo.write(0);
   delay(1000);
-  
-  PORTD &= ~(1 << LED_PIN);
-  
+
+  myServo.write(180);
   delay(1000);
 }
