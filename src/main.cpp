@@ -9,6 +9,7 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo ServoM1;
+Servo ServoM2;
 
 void setup() {
   Wire.begin();
@@ -32,7 +33,10 @@ void setup() {
   DDRB |= (1 << ONBOARD_LED);
   
   // Attach Servo M1
-  myServo.attach(9);
+  ServoM1.attach(9);
+  
+  // Attach Servo M2
+  ServoM2.attach(10);
 }
 
 void loop() {
@@ -42,9 +46,13 @@ void loop() {
   delay(1000);
 
   ServoM1.write(0);
+  ServoM2.write(0);
   delay(1000);
 
-  myServo.write(180);
+  ServoM1.write(180);
+  ServoM2.write(180);
+  
+  delay(1000);
   
   // Check if input on D2 is 1 (LOW due to pull-up logic being inverted)
   if (!(PIND & (1 << INPUT_PIN))) {
