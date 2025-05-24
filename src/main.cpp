@@ -1,13 +1,14 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <Servo.h>
 
 #define INPUT_PIN PD2     // D2 as input
 #define OUTPUT_PIN PD3    // D3 as output
 #define ONBOARD_LED PB5   // Onboard LED on D13/PB5
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-
+Servo ServoM1;
 
 void setup() {
   Wire.begin();
@@ -29,6 +30,9 @@ void setup() {
   
   // Configure onboard LED pin as output
   DDRB |= (1 << ONBOARD_LED);
+  
+  // Attach Servo M1
+  myServo.attach(9);
 }
 
 void loop() {
@@ -37,6 +41,11 @@ void loop() {
   lcd.noBacklight();
   delay(1000);
 
+  ServoM1.write(0);
+  delay(1000);
+
+  myServo.write(180);
+  
   // Check if input on D2 is 1 (LOW due to pull-up logic being inverted)
   if (!(PIND & (1 << INPUT_PIN))) {
     // Set D3 high
