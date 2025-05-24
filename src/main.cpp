@@ -1,17 +1,69 @@
 #include <Arduino.h>
-
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 
-Servo myServo;
+#define INPUT_PIN PD2     // D2 as input
+#define OUTPUT_PIN PD3    // D3 as output
+#define ONBOARD_LED PB5   // Onboard LED on D13/PB5
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+Servo ServoM1;
+Servo ServoM2;
 
 void setup() {
-  myServo.attach(10);
+  Wire.begin();
+  delay(100);
+
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();
+  
+  lcd.setCursor(0, 0);
+  lcd.print("TEST DISPLAY");
+  
+  // Configure D2 as input with pull-up
+  DDRD &= ~(1 << INPUT_PIN);
+  PORTD |= (1 << INPUT_PIN);
+  
+  // Configure D3 as output
+  DDRD |= (1 << OUTPUT_PIN);
+  
+  // Configure onboard LED pin as output
+  DDRB |= (1 << ONBOARD_LED);
+  
+  // Attach Servo M1
+  ServoM1.attach(9);
+  
+  // Attach Servo M2
+  ServoM2.attach(10);
 }
 
 void loop() {
-  myServo.write(0);
+  lcd.backlight();
+  delay(1000);
+  lcd.noBacklight();
   delay(1000);
 
-  myServo.write(180);
+  ServoM1.write(0);
+  ServoM2.write(0);
   delay(1000);
+
+  ServoM1.write(180);
+  ServoM2.write(180);
+  
+  delay(1000);
+  
+  // Check if input on D2 is 1 (LOW due to pull-up logic being inverted)
+  if (!(PIND & (1 << INPUT_PIN))) {
+    // Set D3 high
+    PORTD |= (1 << OUTPUT_PIN);
+    // Turn on onboard LED
+    PORTB |= (1 << ONBOARD_LED);
+  } else {
+    // Set D3 low
+    PORTD &= ~(1 << OUTPUT_PIN);
+    // Turn off onboard LED
+    PORTB &= ~(1 << ONBOARD_LED);
+  }
 }
